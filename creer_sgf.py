@@ -13,8 +13,8 @@ def create_empty_file(file_name, size):
     fichier.write("FF[4]\n")
     fichier.write("CA[UTF-8]\n")
     fichier.write("GM[1]\n")
-    fichier.write("DT[{date}]\n")
-    fichier.write("SZ[{size}]\n")
+    fichier.write(f"DT[{date}]\n")
+    fichier.write(f"SZ[{size}]\n")
     fichier.close()
 
 create_empty_file(sgf, size)
