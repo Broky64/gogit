@@ -1,25 +1,34 @@
 import datetime
 
-color = "W"
-column= "a"
-row = "a"
-
-sgf = input("entrez le nom du fichier sgf \n")
+sgf = input("entrez le nom du fichier sgf que vous voulez créer\n ")
+sgf += '.sgf'
 size = 9
+end = "n"
 def create_empty_file(file_name, size):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    fichier = open(file_name , "w") 
-    fichier.write("(;\n")
-    fichier.write("FF[4]\n")
-    fichier.write("CA[UTF-8]\n")
-    fichier.write("GM[1]\n")
-    fichier.write(f"DT[{date}]\n")
-    fichier.write(f"SZ[{size}]\n")
-    fichier.close()
+    file = open(file_name, "w") 
+    file.write("(;\n")
+    file.write("FF[4]\n")
+    file.write("CA[UTF-8]\n")
+    file.write("GM[1]\n")
+    file.write(f"DT[{date}]\n")
+    file.write(f"SZ[{size}]\n")
+    file.close()
 
 create_empty_file(sgf, size)
 
+def moove(file_name, color, column, row) :
+    file = open(file_name , "a")
+    file.write(f";{color}[{column}{row}]\n")
 
-
-
-create_empty_file(sgf, size)
+while end != "y" :
+    color = input("color")
+    column= input("column")
+    column = column.lower()
+    row = input("row")
+    row = row.lower()
+    end = input("fin de partie ? (y or n)")
+    moove(sgf, color, column, row)
+    
+file = open(sgf, "a")
+file.write(")")
