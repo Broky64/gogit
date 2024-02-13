@@ -1,20 +1,20 @@
 import cv2
 import numpy as np
 
-# Charger l'image et la redimensionner
+# Charger l'img et la redimensionner
 img = cv2.imread('coup1.png')
-image = cv2.resize(img, (500, 500))
+img = cv2.resize(img, (500, 500))
 
-# Convertir l'image en niveaux de gris
+# Convertir l'img en niveaux de gris
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-# Binarisation de l'image
-gray = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY_INV)[1]
+# Binarisation de l'img
+gray = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)[1]
 
 # Détection des lignes
 lines = cv2.HoughLinesP(gray, 1, np.pi/180, 80, minLineLength=80, maxLineGap=20)  # Ajustement des paramètres
 
-# Extension des lignes jusqu'aux bords de l'image
+# Extension des lignes jusqu'aux bords de l'img
 height, width = img.shape[:2]
 extended_lines = []
 for line in lines:
@@ -26,7 +26,7 @@ for line in lines:
     else:
         slope = float('inf')  # Gérer le cas de la pente infinie (ligne verticale)
 
-    # Calcul de l'intersection avec le bord de l'image
+    # Calcul de l'intersection avec le bord de l'img
     if x1 == x2:
         new_x1, new_y1, new_x2, new_y2 = x1, 0, x1, height
     elif slope == 0:
@@ -70,7 +70,7 @@ for point in intersections:
 num_intersections = len(intersections)
 print("Nombre d'intersections détectées :", num_intersections)
 
-# Affichage de l'image
+# Affichage de l'img
 cv2.imshow('img', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
