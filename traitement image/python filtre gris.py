@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 
-image=plt.imread("plateau idéal.png")
+image=plt.imread("plateauideal.png")
 nb_ligne=image.shape[0]
 nb_colonne=image.shape[1]
 copie=image.copy()
