@@ -13,12 +13,29 @@ gray = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)[1]
 
 # Détection des lignes
 lines = cv2.HoughLinesP(gray, 1, np.pi/180, 80, minLineLength=80, maxLineGap=20)  # Ajustement des paramètres
+lines = np.squeeze(lines)
+"""
+def filter_by_coordinates(lines, box) :
+    xmin, ymin, xmax, ymax = box
+    lines_filtered = list()
+    for line in lines :
+        x1, y1, x2, y2 = line
+        if min(x1, x2) <xmin or min(y1, y2) <ymin or max(x1, x2)> xmax or max(y1, y2) > ymax :
+            pass
+        else :
+            lines_filtered.append(line)
+    return lines_filtered
 
+lines = filter_by_coordinates(lines, (0, 0, gray.shape[1]-0, gray.shape[0]-0))
+"""
 # Extension des lignes jusqu'aux bords de l'img
 height, width = img.shape[:2]
 extended_lines = []
 for line in lines:
-    x1, y1, x2, y2 = line[0]
+    if len(line) == 2:  
+        x1, y1, x2, y2 = line[0], line[1], line[0], line[1]
+    else:
+        x1, y1, x2, y2 = line
 
     # Calcul de la pente
     if x2 - x1 != 0:  # Vérifier si le dénominateur n'est pas nul
@@ -71,6 +88,6 @@ num_intersections = len(intersections)
 print("Nombre d'intersections détectées :", num_intersections)
 
 # Affichage de l'img
-cv2.imshow('img', img)
+cv2.imshow('image', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
