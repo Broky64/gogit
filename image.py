@@ -5,7 +5,7 @@ import numpy as np
 img = cv2.imread('coup1.png')
 img = cv2.resize(img, (500, 500))
 
-# Convertir l'img en niveaux de gris
+# Conversion de l'image en niveaux de gris
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Binarisation de l'img
@@ -14,6 +14,7 @@ gray = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)[1]
 # Détection des lignes
 lines = cv2.HoughLinesP(gray, 1, np.pi/180, 80, minLineLength=80, maxLineGap=20)  # Ajustement des paramètres
 lines = np.squeeze(lines)
+cv2.imshow("gray", gray)
 """
 def filter_by_coordinates(lines, box) :
     xmin, ymin, xmax, ymax = box
