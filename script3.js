@@ -10,13 +10,17 @@ document.getElementById("registerForm").addEventListener("submit", function(even
     var isValid = validateForm(username, email, password);
 
     if (isValid) {
-        // Les champs sont valides, vous pouvez ajouter votre logique de création de compte ici
-        // Par exemple, vous pouvez envoyer les données à votre serveur pour enregistrer le nouveau compte
-        // Après la création du compte, vous pouvez rediriger l'utilisateur vers la page de connexion
+        // Les champs sont valides, enregistrer les identifiants dans le stockage local
+        var users = JSON.parse(localStorage.getItem("users")) || [];
+        users.push({ username: username, email: email, password: password });
+        localStorage.setItem("users", JSON.stringify(users));
+
+        // Afficher un message de succès
         alert("Compte créé avec succès !");
-        window.location.href = "user.html"; // Redirection vers la page de connexion
+        // Redirection vers la page de connexion
+        window.location.href = "user.html";
     } else {
-        // Les champs ne sont pas valides
+        // Les champs ne sont pas valides, afficher un message d'erreur
         alert("Veuillez remplir tous les champs correctement.");
     }
 });

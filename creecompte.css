@@ -1,12 +1,15 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+
+    background-image: url('jeugo1.jpeg'); /* Ajouter le chemin de votre image */
+    background-size: cover; /* Assurez-vous que l'image couvre tout l'arrière-plan */
+    background-position: center; /* Centre l'image sur l'arrière-plan */
 }
 
 .container {
@@ -35,7 +38,7 @@ body {
 .container form button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #E56E1A;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -43,7 +46,7 @@ body {
 }
 
 .container form button:hover {
-    background-color: #0056b3;
+    background-color: #b05302;
 }
 
 .container p {
@@ -51,7 +54,7 @@ body {
 }
 
 .container p a {
-    color: #007bff;
+    color: #E56E1A;
     text-decoration: none;
 }
 

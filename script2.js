@@ -19,7 +19,7 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
 
 function checkCredentials(email, password) {
     // Simulation : vérification si les identifiants sont dans une liste prédéfinie
-    var validEmails = ["utilisateur1@example.com", "utilisateur2@example.com"];
+    var validEmails = ["utilisateur1@example.com", "utilisateur2@example.com", "utilisateur2@example.fr"];
     var validPasswords = ["motdepasse1", "motdepasse2"];
 
     // Vérifier si les identifiants sont dans la liste prédéfinie
