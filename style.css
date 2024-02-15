@@ -41,6 +41,12 @@ header {
     background-color: transparent;
     cursor: pointer;
     text-align: left; /* Aligner le texte à gauche */
+    background-repeat: no-repeat; /* Empêcher la répétition de l'image en arrière-plan */
+    background-position: left center; /* Positionner l'image à gauche et centrer verticalement */
+    padding-left: 30px; /* Ajouter un espace à gauche de l'image */
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
 }
 
 .sidebar ul li button:hover {
@@ -51,16 +57,25 @@ header {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
+.sidebar ul li button img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle; /* Aligner l'image verticalement au centre */
+}
 .main-content {
     padding: 20px;
 }
+
 
 section {
     margin-bottom: 20px;
 }
 
 .new-game-button {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    align-items: center;
     background-color: #E56E1A;
     color: #fff;
     padding: 10px 20px;
@@ -72,4 +87,47 @@ section {
 
 .new-game-button:hover {
     background-color: #E56E1A;
+}
+#analyse svg{
+    fill:#fff;
+    gap:0.5em;
+
+}
+.upload-container {
+    width: 480px;
+    height: 56px;
+    background-color: #F5F2F0;
+    border-radius: 10px; /* Taille de rayon de bordure identique à celle du bouton New Game */
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.file-upload-label {
+    display: block;
+    padding: 15px;
+    color: #877363;
+}
+
+#file-upload {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+#sidebar svg{
+    fill:black;
+}
+.sidebar ul:last-child {
+    position: fixed;
+    bottom: 0;
+}
+.sidebar h1 img {
+    width: 5em; /* Ajustez la taille de l'image selon vos besoins */
+    height: auto; /* Laissez la hauteur automatique pour conserver les proportions */
+    vertical-align: middle; /* Aligner l'image verticalement au centre par rapport au texte */
+    margin-right: 10px; /* Ajoutez un espacement à droite pour séparer l'image du texte */
 }
