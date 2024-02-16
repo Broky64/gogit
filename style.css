@@ -3,11 +3,11 @@ body, html {
     padding: 0;
     font-family: Arial, sans-serif;
     color: #171412;
-
 }
 .container {
     display: grid;
     grid-template-columns: auto 1fr;
+    
 }
 
 header {
@@ -15,6 +15,7 @@ header {
     color: #fff;
     padding: 10px;
     text-align: left;
+   
 }
 
 .sidebar {
@@ -64,6 +65,8 @@ header {
 }
 .main-content {
     padding: 20px;
+    
+    
 }
 
 
@@ -130,4 +133,9 @@ section {
     height: auto; /* Laissez la hauteur automatique pour conserver les proportions */
     vertical-align: middle; /* Aligner l'image verticalement au centre par rapport au texte */
     margin-right: 10px; /* Ajoutez un espacement à droite pour séparer l'image du texte */
+}
+nav{
+    background-image: url('jeudego.jpg'); /* Ajouter le chemin de votre image */
+    background-size: cover; /* Assurez-vous que l'image couvre tout l'arrière-plan */
+    background-position:left; /* Centre l'image sur l'arrière-plan */
 }
