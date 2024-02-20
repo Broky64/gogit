@@ -2,14 +2,14 @@ import cv2
 import numpy as np
 
 # Charger l'img et la redimensionner
-img = cv2.imread('coup1.png')
+img = cv2.imread('3.jpg')
 img = cv2.resize(img, (500, 500))
 
 # Conversion de l'image en niveaux de gris
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Binarisation de l'img
-gray = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)[1]
+gray = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)[1]
 
 # Détection des lignes
 lines = cv2.HoughLinesP(gray, 1, np.pi/180, 80, minLineLength=80, maxLineGap=20)  # Ajustement des paramètres
