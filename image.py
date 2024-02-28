@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Charger l'img et la redimensionner
-img = cv2.imread('5.jpg')
+img = cv2.imread('4.jpg')
 img = cv2.resize(img, (500, 500))
 
 # Conversion de l'image en niveaux de gris

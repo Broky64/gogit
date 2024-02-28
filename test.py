@@ -2,9 +2,25 @@ import cv2
 import numpy as np
 from detection_cercle import detect_circles
 
+def find_nearest_intersection(circle_center, intersections):
+    """
+    Trouve l'intersection la plus proche d'un cercle donné parmi la liste des intersections.
+    Retourne les coordonnées de l'intersection la plus proche.
+    """
+    min_distance = float('inf')
+    nearest_intersection = None
+
+    for intersection in intersections:
+        distance = np.sqrt((np.int64(circle_center[0]) - np.int64(intersection[0])) ** 2 + (np.int64(circle_center[1]) - np.int64(intersection[1])) ** 2)
+        if distance < min_distance:
+            min_distance = distance
+            nearest_intersection = intersection
+
+    return nearest_intersection
+
 def hough_transform(image_path):
     # Lire l'image en niveaux de gris
-    output, circle_count = detect_circles(image_path)
+    output, circle_count, circle_list = detect_circles(image_path)
     image = cv2.imread(image_path)
     image = cv2.resize(image, (800, 800))
     
@@ -88,6 +104,12 @@ def hough_transform(image_path):
 
     # Afficher l'image superposée
     cv2.imshow('Images superposées', output_with_intersections)
+
+    # Trouver l'intersection la plus proche de chaque cercle et l'afficher
+    for circle_center in circle_list:
+        nearest_intersection = find_nearest_intersection(circle_center[:2], intersections_merge)
+        print(f"Intersection la plus proche du cercle {circle_center[:2]} : {nearest_intersection}")
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
