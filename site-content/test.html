@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de connexion Flask</title>
+</head>
+<body>
+    <div class="container">
+        <button id="testButton">Tester la connexion</button>
+        <p id="responseText">Attendez la réponse ici...</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const testButton = document.getElementById('testButton');
+            const responseText = document.getElementById('responseText');
+        
+            testButton.addEventListener('click', function () {
+                fetch('http://192.168.1.11:5000/test', {
+                    method: 'GET', // Utilisez 'POST' si votre route Flask attend une méthode POST
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('La réponse du réseau nUL');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    responseText.innerText = 'Réponse du serveur : ' + data;
+                })
+                .catch(error => {
+                    console.error('Il y a eu un problème avec votre requête fetch:', error);
+                    responseText.innerText = 'Erreur lors de la connexion. Veuillez réessayer.';
+                });
+            });
+        });
+        </script>
+        
+        
+</body>
+</html>
