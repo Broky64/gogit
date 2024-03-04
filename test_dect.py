@@ -81,5 +81,5 @@ def detect_circles(image_path):
 
     return output, circle_count, merged
 
-img ="reflet.jpg"
+img ="4.jpg"
 detect_circles(img)

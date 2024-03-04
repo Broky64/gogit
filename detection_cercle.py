@@ -5,10 +5,10 @@ def detect_circles(image_path):
     img = cv2.imread(image_path)
     output = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
+    gray = cv2.medianBlur(gray, 5)
     _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
 
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=30, maxRadius=47)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=30, maxRadius=60)
 
     circle_count = 0  
 
@@ -21,7 +21,7 @@ def detect_circles(image_path):
             roi = binary[y-r:y+r, x-r:x+r]
             mean_val = np.mean(roi)
 
-            cv2.circle(output, (x, y), r, (0, 255, 0) if mean_val > 127 else (255, 0, 0), 3)
+            cv2.circle(output, (x, y), r, (0, 255, 0) if mean_val >= 68 else (255, 0, 0), 3)
 
             centers_list.append((x, y, r))  
             circle_count += 1  
@@ -78,7 +78,7 @@ def detect_circles(image_path):
             roi = binary[y-r:y+r, x-r:x+r]
             mean_val = np.mean(roi)
 
-            if mean_val > 65:
+            if mean_val > 80:
                 circle_brightness.append("blanc")
             else:
                 circle_brightness.append("noir")
@@ -87,6 +87,7 @@ def detect_circles(image_path):
 
         # Créez une copie de l'image d'origine
         merged_image = img.copy()
+        output = cv2.resize(output, (800, 800))
 
         # Dessinez les cercles fusionnés sur l'image fusionnée avec les coordonnées du centre
         for (x, y, r) in merged:
@@ -98,12 +99,11 @@ def detect_circles(image_path):
             cv2.putText(merged_image, f'({x}, {y})', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
 
         # Affichez les deux images côte à côte
-        output = cv2.resize(output, (800, 800))
         merged_image = cv2.resize(merged_image, (800, 800))
         cv2.imshow('output_and_merged', np.hstack([output, merged_image]))
         cv2.waitKey(0)
 
     return output, circle_count, merged
 
-img = "bordel.jpg"
+img = "reflet.jpg"
 detect_circles(img)
