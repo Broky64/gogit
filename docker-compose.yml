@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  python:
+    image: python:3.12
+    volumes:
+      - ./python_app:/app
+    working_dir: /app
+        command: /bin/sh -c "pip install -r requirements.txt && python /app/app.py"
+    restart: unless-stopped
+    ports:
+      - "5000:5000"  # Mapping du port 5000 du conteneur au port 5000 du système hôte
+    networks:
+      - web
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: vivelego
+      MYSQL_DATABASE: govision
+      # MYSQL_USER: utilisateur
+      # MYSQL_PASSWORD: motdepasse
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - web
+
+  apache:
+    image: httpd:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./apache-conf/mysite.conf:/usr/local/apache2/conf/mysite.conf
+      - ./site-content:/usr/local/apache2/htdocs
+    depends_on:
+      - python
+      - mysql
+    restart: unless-stopped
+    networks:
+      - web
+    command: >
+      /bin/bash -c "echo 'Include /usr/local/apache2/conf/mysite.conf' >> /usr/local/apache2/conf/httpd.conf &&
+      exec httpd-foreground"
+
+networks:
+  web:
+    name: web
