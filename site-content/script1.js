@@ -1,36 +1,36 @@
-// Fonction pour démarrer la caméra
-function startCamera() {
+// Fonction pour démarrer ou quitter la caméra
+function toggleCamera() {
     const cameraFeed = document.getElementById('camera-feed');
-    cameraFeed.innerHTML = '<video id="video" width="400" height="300" autoplay></video>';
     const video = document.getElementById('video');
 
-    // Accès à la caméra
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function(stream) {
-            video.srcObject = stream;
-            // Afficher les boutons de capture et quitter la caméra
-            document.getElementById('capture-photo-button').style.display = 'inline-block';
-            document.getElementById('quit-camera-button').style.display = 'inline-block';
-            // Cacher le bouton New Game
-            document.querySelector('.new-game-button').style.display = 'none';
-            // Charger les photos précédemment enregistrées
-            loadLastGamePhotos();
-        })
-        .catch(function(err) {
-            console.log("An error occurred: " + err);
-        });
-}
+    if (!cameraFeed.contains(video)) {
+        // Démarrer la caméra
+        cameraFeed.innerHTML = '<video id="video" width="400" height="300" autoplay></video>';
+        
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+                // Afficher les boutons de capture et quitter la caméra
+                document.getElementById('capture-photo-button').style.display = 'inline-block';
+                document.getElementById('quit-camera-button').style.display = 'inline-block';
+                // Cacher le bouton New Game
+                document.querySelector('.new-game-button').style.display = 'none';
+                // Charger les photos précédemment enregistrées
+                loadLastGamePhotos();
+            })
+            .catch(function(err) {
+                console.log("An error occurred: " + err);
+            });
+    } else {
+        // Quitter la caméra
+        cameraFeed.innerHTML = ''; // Efface le contenu de la zone de la caméra
 
-// Fonction pour quitter le mode photo
-function quitCamera() {
-    const cameraFeed = document.getElementById('camera-feed');
-    cameraFeed.innerHTML = ''; // Efface le contenu de la zone de la caméra
-
-    // Cacher les boutons de capture et quitter la caméra
-    document.getElementById('capture-photo-button').style.display = 'none';
-    document.getElementById('quit-camera-button').style.display = 'none';
-    // Afficher le bouton New Game
-    document.querySelector('.new-game-button').style.display = 'inline-block';
+        // Cacher les boutons de capture et quitter la caméra
+        document.getElementById('capture-photo-button').style.display = 'none';
+        document.getElementById('quit-camera-button').style.display = 'none';
+        // Afficher le bouton New Game
+        document.querySelector('.new-game-button').style.display = 'inline-block';
+    }
 }
 
 // Fonction pour capturer une photo
