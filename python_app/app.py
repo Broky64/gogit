@@ -39,23 +39,26 @@ def login():
 @app.route('/register', methods=['POST'])
 def register():
     # Récupérer les données du formulaire d'inscription envoyées par le frontend
-    email = request.json.get('email')
+    username = request.json.get('email')  # Utilisez 'email' du côté client, mais c'est 'username' ici
     password = request.json.get('password')
 
     # Créer un curseur pour exécuter des requêtes SQL
     cursor = db.cursor()
 
-    # Vérifier si l'email existe déjà dans la base de données
-    cursor.execute('SELECT * FROM utilisateurs WHERE email = %s', (email,))
+    # Vérifier si le 'username' (email) existe déjà dans la base de données
+    cursor.execute('SELECT * FROM utilisateurs WHERE username = %s', (username,))
     existing_user = cursor.fetchone()
+
+    if existing_user:
+        cursor.close()
+        return jsonify({'message': 'L\'utilisateur existe déjà'}), 400
 
     try:
         # Exécuter une requête SQL pour insérer les données dans la base de données
-        cursor.execute('INSERT INTO utilisateurs (email, password) VALUES (%s, %s)', (email, password))
+        cursor.execute('INSERT INTO utilisateurs (username, password) VALUES (%s, %s)', (username, password))
         db.commit()
         cursor.close()
-        # Retourner une réponse JSON indiquant que le compte a été créé avec succès
-        return jsonify({'message': 'Compte créé avec succès'}), 200
+        return jsonify({'message': 'Compte créé avec succès'}), 201
     except Exception as e:
         # En cas d'erreur, annuler les modifications et retourner une réponse JSON d'erreur
         db.rollback()
