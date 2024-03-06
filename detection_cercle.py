@@ -22,7 +22,7 @@ def detect_circles(image_path):
             roi = binary[y-r:y+r, x-r:x+r]
             mean_val = np.mean(roi)
             print (x,y,r,"roi :",mean_val)
-            cv2.circle(output, (x, y), r, (0, 255, 0) if mean_val >= 30 else (255, 0, 0), 3)
+            cv2.circle(output, (x, y), r, (0, 255, 0) if mean_val >= 50 else (255, 0, 0), 3)
             circle_centers.append((x, y, r))  
             circle_colors.append("blanc" if mean_val >= 50 else "noir")  
             circle_count += 1  
@@ -86,7 +86,7 @@ def detect_circles(image_path):
         cv2.imshow('output_and_merged', np.hstack([output, merged_image]))
         cv2.waitKey(0)
     print("Liste des couleurs des cercles fusionnés:", merged_colors)
-    return output, circle_count, merged
+    return output, circle_count, merged, merged_colors
 
 img = "reflet.jpg"
 detect_circles(img)
