@@ -1,0 +1,8 @@
+mysql_data/
+*.ibd
+*.tmp
+*.sock
+binlog.*
+ibdata1
+ibtmp1
+undo_00*
