@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
             email: email,
             password: password
         };
-        console.log("Sending user data:", JSON.stringify(userData));
 
         // Envoyer la requête POST à l'application Flask pour créer un compte
         fetch('http://192.168.1.11:5000/register', {
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify(userData),
         })
         .then(response => {
-            console.log("Raw Server Response:", response);
             if (!response.ok) {
                 return response.text()  // ou response.json(), selon le type de réponse attendu
                 .then(text => { throw new Error(`Network response was not ok: ${response.statusText}. Body: ${text}`); });
