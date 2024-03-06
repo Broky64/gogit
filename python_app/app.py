@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify
 import mysql.connector
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 CORS(app)
+
 # Configuration de la connexion à la base de données MySQL
 db = mysql.connector.connect(
     host="mysql",
@@ -12,6 +12,7 @@ db = mysql.connector.connect(
     password="vivelego",
     database="govision"
 )
+
 # Route pour gérer la requête de connexion
 @app.route('/login', methods=['POST'])
 def login():
@@ -33,6 +34,34 @@ def login():
     else:
         # Si les identifiants ne correspondent pas, retourner une réponse JSON d'erreur
         return jsonify({'message': 'Identifiants incorrects'}), 401
+
+# Nouvelle route pour gérer la création de compte
+@app.route('/register', methods=['POST'])
+def register():
+    # Récupérer les données du formulaire d'inscription envoyées par le frontend
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    # Créer un curseur pour exécuter des requêtes SQL
+    cursor = db.cursor()
+
+    # Vérifier si l'email existe déjà dans la base de données
+    cursor.execute('SELECT * FROM utilisateurs WHERE email = %s', (email,))
+    existing_user = cursor.fetchone()
+
+    try:
+        # Exécuter une requête SQL pour insérer les données dans la base de données
+        cursor.execute('INSERT INTO utilisateurs (email, password) VALUES (%s, %s)', (email, password))
+        db.commit()
+        cursor.close()
+        # Retourner une réponse JSON indiquant que le compte a été créé avec succès
+        return jsonify({'message': 'Compte créé avec succès'}), 200
+    except Exception as e:
+        # En cas d'erreur, annuler les modifications et retourner une réponse JSON d'erreur
+        db.rollback()
+        cursor.close()
+        return jsonify({'message': 'Erreur lors de la création du compte'}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

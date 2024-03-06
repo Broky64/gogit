@@ -1,33 +1,35 @@
-document.getElementById("registerForm").addEventListener("submit", function(event) {
-    event.preventDefault(); // Empêcher l'envoi du formulaire par défaut
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
 
-    // Récupérer les valeurs des champs nom d'utilisateur, email et mot de passe
-    var username = document.getElementById("username").value;
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
+    registerForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêche le formulaire de soumettre de manière traditionnelle
 
-    // Valider les champs (exemple simplifié)
-    var isValid = validateForm(username, email, password);
+        // Récupération des valeurs du formulaire
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-    if (isValid) {
-        // Les champs sont valides, enregistrer les identifiants dans le stockage local
-        var users = JSON.parse(localStorage.getItem("users")) || [];
-        users.push({ username: username, email: email, password: password });
-        localStorage.setItem("users", JSON.stringify(users));
+        // Construction de l'objet data contenant les informations d'inscription
+        const userData = {
+            email: email,
+            password: password
+        };
 
-        // Afficher un message de succès
-        alert("Compte créé avec succès !");
-        // Redirection vers la page de connexion
-        window.location.href = "user.html";
-    } else {
-        // Les champs ne sont pas valides, afficher un message d'erreur
-        alert("Veuillez remplir tous les champs correctement.");
-    }
+        // Envoi de la requête POST à l'application Flask pour créer un compte
+        fetch('http://192.168.1.11:5000/register', { // Remplacez l'URL par celle de votre serveur
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData), // Conversion de l'objet userData en chaîne JSON
+        })
+        .then(response => response.json()) // Conversion de la réponse en JSON
+        .then(data => {
+            console.log(data); // Affiche la réponse du serveur dans la console
+            alert('Réponse du serveur : ' + data.message); // Affiche la réponse du serveur dans une alerte
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la création du compte. Veuillez réessayer.'); // Affiche l'erreur sur la page
+        });
+    });
 });
-
-function validateForm(username, email, password) {
-    // Fonction de validation simplifiée
-    // Vous pouvez implémenter votre propre logique de validation ici
-    // Par exemple, vérifier si l'email est dans un format valide, si le mot de passe est assez fort, etc.
-    return username.trim() !== "" && email.trim() !== "" && password.trim() !== "";
-}
