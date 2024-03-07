@@ -25,8 +25,13 @@ def hough_transform(image_path):
     # Appliquer l'algorithme de Canny pour détecter les contours
     edges = cv2.Canny(image, 100, 200, apertureSize=3)  # Ajuster les seuils selon l'image
     
+    # Afficher l'image en niveaux de gris
+    cv2.imshow('Image en niveaux de gris', edges)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     # Appliquer la transformée de Hough pour détecter les lignes
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 250)
     
     # Initialiser le compteur d'intersections
     intersection_count = 0
@@ -59,7 +64,7 @@ def hough_transform(image_path):
                     intersection_point = np.linalg.solve(A, b)
                     if (0 <= intersection_point[0, 0] < image.shape[1]) and (0 <= intersection_point[1, 0] < image.shape[0]):
                         intersections.append((intersection_point[0, 0], intersection_point[1, 0]))  # Ajouter les coordonnées à la liste
-                        cv2.circle(image, (int(intersection_point[0, 0]), int(intersection_point[1, 0])), 5, (0, 255, 0), -1)
+                        cv2.circle(image, (int(intersection_point[0, 0]), int(intersection_point[1, 0])), 1, (0, 255, 0), -1)
 
     intersections_merge = []
     i = 0

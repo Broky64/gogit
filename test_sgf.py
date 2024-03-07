@@ -5,10 +5,10 @@ from test import hough_transform
 intersection_info = hough_transform("4.jpg")
 
 # Nom du fichier SGF à créer
-sgf = "votre_nom_de_fichier.sgf"
+sgf = "oui.sgf"
 
 # Taille du fichier SGF
-size = 9
+size = 19
 
 # Fonction pour créer un fichier SGF vide
 def create_empty_file(file_name, size):

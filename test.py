@@ -25,35 +25,47 @@ def label_intersections(intersections):
     """
     labels_dict = {}
     label_index = 0
-    for i in range(26):  # Augmenter la taille de la grille pour contenir plus d'intersections
-        for j in range(26):  # Augmenter la taille de la grille pour contenir plus d'intersections
+    for i in range(19):  # Augmenter la taille de la grille pour contenir plus d'intersections
+        for j in range(19):  # Augmenter la taille de la grille pour contenir plus d'intersections
             if label_index < len(intersections):
-                label = chr(97 + i) + chr(97 + j)  # Convertir les indices en lettres
+                label = chr(97 + j) + chr(97 + i)  # Convertir les indices en lettres
                 labels_dict[label] = intersections[label_index]  # Associer l'étiquette aux coordonnées
                 label_index += 1
     return labels_dict
+
+def sort_intersections(intersections):
+    """
+    Trie les intersections en fonction de leur position en x et y.
+    """
+    return sorted(intersections, key=lambda x: (round(x[1]/14)*14, round(x[0])))
+
 
 def hough_transform(image_path):
     # Lire l'image en niveaux de gris
     output, circle_count, circle_list, merged_colors = detect_circles(image_path)
     image = cv2.imread(image_path)
-    q,s,d= image.shape
+    q, s, d = image.shape
     image = cv2.resize(image, (800, 800))
-    k,l,m = image.shape
-    w = q/k  #calcul de la différence de width entre les 2 images
-    h=s/l #calcul de la différence de hight entre les 2 images
-    c=d/m
-    
+    k, l, m = image.shape
+    w = q / k  # calcul de la différence de width entre les 2 images
+    h = s / l  # calcul de la différence de hight entre les 2 images
+    c = d / m
+
     # Appliquer l'algorithme de Canny pour détecter les contours
     edges = cv2.Canny(image, 100, 200, apertureSize=3)  # Ajuster les seuils selon l'image
-    
+
+    # Afficher l'image en niveaux de gris
+    cv2.imshow('Image en niveaux de gris', edges)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     # Appliquer la transformée de Hough pour détecter les lignes
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
-    
+    lines = cv2.HoughLines(edges, 1, np.pi / 180, 250)
+
     # Initialiser le compteur d'intersections
     intersection_count = 0
     intersections = []  # Liste pour stocker les coordonnées des intersections
-    
+
     if lines is not None:
         for rho, theta in lines[:, 0]:
             a = np.cos(theta)
@@ -65,10 +77,10 @@ def hough_transform(image_path):
             x2 = int(x0 - 1000 * (-b))
             y2 = int(y0 - 1000 * (a))
             cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        
+
         # Trouver les intersections entre les lignes détectées
         for i in range(len(lines)):
-            for j in range(i+1, len(lines)):
+            for j in range(i + 1, len(lines)):
                 rho1, theta1 = lines[i][0]
                 rho2, theta2 = lines[j][0]
                 denominator = np.sin(theta1 - theta2)
@@ -93,20 +105,27 @@ def hough_transform(image_path):
             x2, y2 = intersections[j]
             distance = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             if distance < 20:
-                x1 = int((x1 + x2) / 2) 
+                x1 = int((x1 + x2) / 2)
                 y1 = int((y1 + y2) / 2)
                 del intersections[j]
             else:
                 j += 1
         intersections_merge.append((x1, y1))
         i += 1
-        
+
     intersection_count = len(intersections_merge)  # Compter les intersections détectées
 
-    # Afficher l'image avec les lignes et les intersections détectées
+    # Trier les intersections avant de les étiqueter
+    intersections_merge = sort_intersections(intersections_merge)
+
+    # Afficher l'image des intersections
+    intersections_image = np.zeros_like(output)
     for x, y in intersections_merge:
-        cv2.circle(image, (int(x), int(y)), 5, (0, 255, 0), -1)
-    
+        cv2.circle(intersections_image, (int(x), int(y)), 5, (0, 255, 0), -1)
+    cv2.imshow('Image des intersections', intersections_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     # Numéroter les intersections
     intersections_labeled = label_intersections(intersections_merge)
     print("Intersections étiquetées :")
@@ -127,11 +146,12 @@ def hough_transform(image_path):
     # Superposer les cercles détectés avec les intersections
     output_with_intersections = cv2.addWeighted(output, 0.5, intersections_image, 0.5, 0)
     for label, intersection_coords in intersections_labeled.items():
-     x, y = intersection_coords
-     text = f"({int(x)}, {int(y)})"
-     cv2.putText(output_with_intersections, text, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 255, 255), 1, cv2.LINE_AA)
+        x, y = intersection_coords
+        text = f"({int(x)}, {int(y)})"
+        cv2.putText(output_with_intersections, text, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 255, 255),
+                    1, cv2.LINE_AA)
     # Afficher l'image superposée
-    
+
     cv2.imshow('Images superposées', output_with_intersections)
 
     # Trouver l'intersection la plus proche de chaque cercle et l'afficher
@@ -141,7 +161,7 @@ def hough_transform(image_path):
         # Diviser les coordonnées des cercles par les facteurs de redimensionnement
         circle_center_resized = (circle_center[0] / h, circle_center[1] / w)
         nearest_intersection = find_nearest_intersection(circle_center_resized, intersections_merge)
-        
+
         # Trouver la lettre associée à l'intersection
         for label, intersection_coords in intersections_labeled.items():
             if intersection_coords == nearest_intersection:
@@ -154,12 +174,13 @@ def hough_transform(image_path):
     # Affichage des intersections près des cercles avec leurs informations
     print("Intersections près des cercles avec leurs informations :")
     for intersection_info in intersections_near_circles:
-        print("Intersection:", intersection_info[0], "Lettres associées:", intersection_info[1], "Couleur du cercle:", intersection_info[2])
-    print("width:",w)
-    print("high:",h)
+        print("Intersection:", intersection_info[0], "Lettres associées:", intersection_info[1],
+              "Couleur du cercle:", intersection_info[2])
+    print("width:", w)
+    print("high:", h)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     return intersections_near_circles
 
-image_path = "4.jpg"
+image_path = "3.jpg"
 hough_transform(image_path)
