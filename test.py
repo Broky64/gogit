@@ -126,8 +126,12 @@ def hough_transform(image_path):
 
     # Superposer les cercles détectés avec les intersections
     output_with_intersections = cv2.addWeighted(output, 0.5, intersections_image, 0.5, 0)
-
+    for label, intersection_coords in intersections_labeled.items():
+     x, y = intersection_coords
+     text = f"({int(x)}, {int(y)})"
+     cv2.putText(output_with_intersections, text, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.2, (255, 255, 255), 1, cv2.LINE_AA)
     # Afficher l'image superposée
+    
     cv2.imshow('Images superposées', output_with_intersections)
 
     # Trouver l'intersection la plus proche de chaque cercle et l'afficher
@@ -135,7 +139,7 @@ def hough_transform(image_path):
 
     for circle_center, circle_color in zip(circle_list, merged_colors):
         # Diviser les coordonnées des cercles par les facteurs de redimensionnement
-        circle_center_resized = (circle_center[0] / w, circle_center[1] / h)
+        circle_center_resized = (circle_center[0] / h, circle_center[1] / w)
         nearest_intersection = find_nearest_intersection(circle_center_resized, intersections_merge)
         
         # Trouver la lettre associée à l'intersection
@@ -151,7 +155,8 @@ def hough_transform(image_path):
     print("Intersections près des cercles avec leurs informations :")
     for intersection_info in intersections_near_circles:
         print("Intersection:", intersection_info[0], "Lettres associées:", intersection_info[1], "Couleur du cercle:", intersection_info[2])
-
+    print("width:",w)
+    print("high:",h)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     return intersections_near_circles

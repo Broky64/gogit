@@ -88,5 +88,5 @@ def detect_circles(image_path):
     print("Liste des couleurs des cercles fusionnés:", merged_colors)
     return output, circle_count, merged, merged_colors
 
-img = "reflet.jpg"
+img = "4.jpg"
 detect_circles(img)
