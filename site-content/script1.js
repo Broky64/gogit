@@ -4,11 +4,11 @@ function toggleCamera() {
     const video = document.getElementById('video');
 
     if (!cameraFeed.contains(video)) {
-        // Démarrer la caméra
-        cameraFeed.innerHTML = '<video id="video" width="400" height="300" autoplay></video>';
-        
+        // Demander l'autorisation à l'utilisateur d'accéder à la caméra
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(function(stream) {
+                // Autorisation accordée, démarrer la caméra
+                cameraFeed.innerHTML = '<video id="video" width="400" height="300" autoplay></video>';
                 video.srcObject = stream;
                 // Afficher les boutons de capture et quitter la caméra
                 document.getElementById('capture-photo-button').style.display = 'inline-block';
@@ -19,11 +19,20 @@ function toggleCamera() {
                 loadLastGamePhotos();
             })
             .catch(function(err) {
-                console.log("An error occurred: " + err);
+                // L'utilisateur a refusé l'accès ou une erreur est survenue
+                console.log("Impossible d'accéder à la caméra: " + err);
             });
     } else {
-        // Quitter la caméra
-        cameraFeed.innerHTML = ''; // Efface le contenu de la zone de la caméra
+        // Arrêter la caméra
+        const stream = video.srcObject;
+        const tracks = stream.getTracks();
+
+        tracks.forEach(function(track) {
+            track.stop();
+        });
+
+        // Supprimer la vidéo de la zone de la caméra
+        cameraFeed.innerHTML = '';
 
         // Cacher les boutons de capture et quitter la caméra
         document.getElementById('capture-photo-button').style.display = 'none';
