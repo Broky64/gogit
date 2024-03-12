@@ -52,7 +52,7 @@ def hough_transform(image_path):
     c = d / m
 
     # Appliquer l'algorithme de Canny pour détecter les contours
-    edges = cv2.Canny(image, 100, 200, apertureSize=3)  # Ajuster les seuils selon l'image
+    edges = cv2.Canny(image, 50, 200, apertureSize=3)  # Ajuster les seuils selon l'image
 
     # Afficher l'image en niveaux de gris
     cv2.imshow('Image en niveaux de gris', edges)
@@ -182,5 +182,5 @@ def hough_transform(image_path):
     cv2.destroyAllWindows()
     return intersections_near_circles
 
-image_path = "3.jpg"
+image_path = "4.jpg"
 hough_transform(image_path)

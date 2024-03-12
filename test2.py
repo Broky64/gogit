@@ -2,41 +2,40 @@ import cv2
 import numpy as np
 
 def find_nearest_intersection(circle_center, intersections):
-    """
-    Trouve l'intersection la plus proche d'un cercle donné parmi la liste des intersections.
-    Retourne les coordonnées de l'intersection la plus proche.
-    """
     min_distance = float('inf')
     nearest_intersection = None
 
     for intersection in intersections:
-        distance = np.sqrt((np.int64(circle_center[0]) - np.int64(intersection[0])) ** 2 + (np.int64(circle_center[1]) - np.int64(intersection[1])) ** 2)
+        distance = np.sqrt((circle_center[0] - intersection[0]) ** 2 + (circle_center[1] - intersection[1]) ** 2)
         if distance < min_distance:
             min_distance = distance
             nearest_intersection = intersection
 
     return nearest_intersection
 
-def hough_transform(image_path):
-    # Lire l'image en niveaux de gris
-    image = cv2.imread(image_path)
-    image = cv2.resize(image, (800, 800))
-    
-    # Appliquer l'algorithme de Canny pour détecter les contours
-    edges = cv2.Canny(image, 100, 200, apertureSize=3)  # Ajuster les seuils selon l'image
-    
-    # Afficher l'image en niveaux de gris
-    cv2.imshow('Image en niveaux de gris', edges)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+def label_intersections(intersections):
+    labels_dict = {}
+    label_index = 0
+    for i in range(19):
+        for j in range(19):
+            if label_index < len(intersections):
+                label = chr(97 + j) + chr(97 + i)
+                labels_dict[label] = intersections[label_index]
+                label_index += 1
+    return labels_dict
 
-    # Appliquer la transformée de Hough pour détecter les lignes
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 250)
-    
-    # Initialiser le compteur d'intersections
+def sort_intersections(intersections):
+    return sorted(intersections, key=lambda x: (round(x[1]/14)*14, round(x[0])))
+
+def hough_transform(image_path):
+    original_image = cv2.imread(image_path)
+    edges = cv2.Canny(original_image, 50, 200, apertureSize=3)
+
+    lines = cv2.HoughLines(edges, 1, np.pi / 180, 250)
+
     intersection_count = 0
-    intersections = []  # Liste pour stocker les coordonnées des intersections
-    
+    intersections = []
+
     if lines is not None:
         for rho, theta in lines[:, 0]:
             a = np.cos(theta)
@@ -47,24 +46,20 @@ def hough_transform(image_path):
             y1 = int(y0 + 1000 * (a))
             x2 = int(x0 - 1000 * (-b))
             y2 = int(y0 - 1000 * (a))
-            cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        
-        # Trouver les intersections entre les lignes détectées
+            cv2.line(original_image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+
         for i in range(len(lines)):
-            for j in range(i+1, len(lines)):
+            for j in range(i + 1, len(lines)):
                 rho1, theta1 = lines[i][0]
                 rho2, theta2 = lines[j][0]
                 denominator = np.sin(theta1 - theta2)
-                if denominator != 0:  # Vérifier que le dénominateur n'est pas égal à zéro
-                    A = np.array([
-                        [np.cos(theta1), np.sin(theta1)],
-                        [np.cos(theta2), np.sin(theta2)]
-                    ])
+                if denominator != 0:
+                    A = np.array([[np.cos(theta1), np.sin(theta1)], [np.cos(theta2), np.sin(theta2)]])
                     b = np.array([[rho1], [rho2]])
                     intersection_point = np.linalg.solve(A, b)
-                    if (0 <= intersection_point[0, 0] < image.shape[1]) and (0 <= intersection_point[1, 0] < image.shape[0]):
-                        intersections.append((intersection_point[0, 0], intersection_point[1, 0]))  # Ajouter les coordonnées à la liste
-                        cv2.circle(image, (int(intersection_point[0, 0]), int(intersection_point[1, 0])), 1, (0, 255, 0), -1)
+                    if (0 <= intersection_point[0, 0] < original_image.shape[1]) and (0 <= intersection_point[1, 0] < original_image.shape[0]):
+                        intersections.append((intersection_point[0, 0], intersection_point[1, 0]))
+                        cv2.circle(original_image, (int(intersection_point[0, 0]), int(intersection_point[1, 0])), 5, (0, 255, 0), -1)
 
     intersections_merge = []
     i = 0
@@ -75,31 +70,34 @@ def hough_transform(image_path):
         while j < len(intersections):
             x2, y2 = intersections[j]
             distance = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-            if distance < 20:
-                x1 = int((x1 + x2) / 2) 
+            if distance < 40:
+                x1 = int((x1 + x2) / 2)
                 y1 = int((y1 + y2) / 2)
                 del intersections[j]
             else:
                 j += 1
         intersections_merge.append((x1, y1))
         i += 1
-        
-    intersection_count = len(intersections_merge)  # Compter les intersections détectées
 
-    # Afficher l'image avec les lignes et les intersections détectées
+    intersection_count = len(intersections_merge)
+    intersections_merge = sort_intersections(intersections_merge)
+
+    intersections_labeled = label_intersections(intersections_merge)
+    print("Intersections étiquetées :")
+    print(intersections_labeled)
+
+    print("nombre d'intersections :", intersection_count)
+
     for x, y in intersections_merge:
-        cv2.circle(image, (int(x), int(y)), 5, (0, 255, 0), -1)
+        cv2.circle(original_image, (int(x), int(y)), 5, (0, 255, 0), -1)
 
-    # Afficher le nombre d'intersections détectées
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(image, f"Nombre d'intersections : {intersection_count}", (10, 30), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-    # Afficher l'image
-    cv2.imshow('Image avec intersections', image)
+    intersections_image = np.zeros_like(original_image)
+    for x, y in intersections_merge:
+        cv2.circle(intersections_image, (int(x), int(y)), 5, (0, 255, 0), -1)
 
+    cv2.imshow('Intersections détectées', np.hstack((cv2.resize(original_image, (400, 400)), cv2.resize(intersections_image, (400, 400)))))
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-        
-    return intersections_merge
 
-image_path ="4.jpg"
-hough_transform(image_path)
+# Exemple d'utilisation :
+hough_transform("6.jpg")
