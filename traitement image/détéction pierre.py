@@ -12,13 +12,32 @@ def hough_transform(image_path):
     
     # Appliquer la transformée de Hough pour détecter les lignes
     lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
-    
+
+
     # Initialiser le compteur d'intersections
     intersection_count = 0
     intersections = []  # Liste pour stocker les coordonnées des intersections
-    
-    if lines is not None:
-        for rho, theta in lines[:, 0]:
+    lines_merge = []
+    i = 0
+    while i < len(lines):
+        rho1, theta1= lines[i][0]
+        j = i + 1
+        while j < len(lines):
+            rho2,theta2 = lines[j][0]
+            distance = abs(rho2-rho1)
+            angle=abs(theta2-theta1)
+
+            if distance < 15 and angle <0.25:
+                rho1 = (rho1 + rho2)/2
+                lines = np.concatenate((lines[:j], lines[j + 1:]))
+            else:
+                j += 1
+        lines_merge.append((rho1, theta1))
+        i += 1
+    lines_merge=np.array(lines_merge)
+    print(lines_merge[15])
+    if lines_merge is not None:
+        for rho, theta in lines_merge:
             a = np.cos(theta)
             b = np.sin(theta)
             x0 = a * rho
@@ -30,10 +49,10 @@ def hough_transform(image_path):
             cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
         
         # Trouver les intersections entre les lignes détectées
-        for i in range(len(lines)):
-            for j in range(i+1, len(lines)):
-                rho1, theta1 = lines[i][0]
-                rho2, theta2 = lines[j][0]
+        for i in range(len(lines_merge)):
+            for j in range(i+1, len(lines_merge)):
+                rho1, theta1 = lines_merge[i]
+                rho2, theta2 = lines_merge[j]
                 denominator = np.sin(theta1 - theta2)
                 if denominator != 0:  # Vérifier que le dénominateur n'est pas égal à zéro
                     A = np.array([
@@ -45,7 +64,7 @@ def hough_transform(image_path):
                     if (0 <= intersection_point[0] < image.shape[1]) and (0 <= intersection_point[1] < image.shape[0]):
                         intersections.append((intersection_point[0], intersection_point[1]))  # Ajouter les coordonnées à la liste
                         cv2.circle(image, (int(intersection_point[0]), int(intersection_point[1])), 5, (0, 255, 0), -1)
-
+    print(len(intersections))
     intersections_merge = []
     i = 0
     while i < len(intersections):
@@ -55,7 +74,7 @@ def hough_transform(image_path):
         while j < len(intersections):
             x2, y2 = intersections[j]
             distance = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-            if distance < 20:
+            if distance < 10:
                 x1 = int((x1 + x2) / 2) 
                 y1 = int((y1 + y2) / 2)
                 del intersections[j]
@@ -68,8 +87,9 @@ def hough_transform(image_path):
 
 
     # Afficher l'image avec les lignes et les intersections détectées
-    #for x, y in intersections_merge:
-        #cv2.circle(image, (int(x), int(y)), 5, (0, 255, 0), -1)
+    for x, y in intersections_merge:
+        cv2.circle(image, (int(x), int(y)), 5, (0, 255, 0), -1)
+    cv2.imshow("transformation de hough", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
@@ -79,8 +99,8 @@ def hough_transform(image_path):
         x2, y2 = intersections_merge[i-1]
         if abs(y1-y2)<5:
             intersections_merge[i]=x1, y2
-        
-    return sorted(intersections_merge, key=lambda coord: (-coord[1], coord[0]))
+    print(len(intersections_merge))
+    return
 
 def cercle(image_path):
     niveau_gris_intersections=[]
@@ -135,7 +155,7 @@ def etat_position(image_path):
 
 
 #image_path="1plateau.jpg"
-#image_path="plateauideal.jpg"
-image_path="goban.png"
-#niveau_gris_intersections = cercle(image_path)
+image_path="3plateau.jpg"
+#image_path="goban.png"
+niveau_gris_intersections = cercle(image_path)
 tableau=etat_position(image_path)
