@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from detection_cercle import detect_circles
 
-def find_nearest_intersection(circle_center, intersections):
+def find_nearest_intersection(circle_center, intersections): #circle_center : centre des pierres détectées, intersections : liste des intersections détectées
     """
     Trouve l'intersection la plus proche d'un cercle donné parmi la liste des intersections.
     Retourne les coordonnées de l'intersection la plus proche.
@@ -15,10 +15,9 @@ def find_nearest_intersection(circle_center, intersections):
         if distance < min_distance:
             min_distance = distance
             nearest_intersection = intersection
+    return nearest_intersection  #coordonnée de l'intersection la plus proche de la pierre cherchée
 
-    return nearest_intersection
-
-def label_intersections(intersections):
+def label_intersections(intersections): #intersections : liste des intersections
     """
     Numérote chaque intersection de aa pour tout en haut à gauche jusqu'à tt pour tout en bas à droite.
     Retourne un dictionnaire avec les étiquettes et les coordonnées des intersections.
@@ -31,16 +30,17 @@ def label_intersections(intersections):
                 label = chr(97 + j) + chr(97 + i)  # Convertir les indices en lettres
                 labels_dict[label] = intersections[label_index]  # Associer l'étiquette aux coordonnées
                 label_index += 1
-    return labels_dict
+    print("labels_dict",labels_dict)
+    return labels_dict #labels_dict : liste avec les coordonnées et leur lettre associé du goban 
 
-def sort_intersections(intersections):
+def sort_intersections(intersections): #intersections : liste des intersections dans le désordre
     """
     Trie les intersections en fonction de leur position en x et y.
     """
-    return sorted(intersections, key=lambda x: (round(x[1]/14)*14, round(x[0])))
+    return sorted(intersections, key=lambda x: (round(x[1]/14)*14, round(x[0]))) #liste avec les intersections triées
 
 
-def hough_transform(image_path):
+def hough_transform(image_path): #image_path : photo du plateau non modifiées
     # Lire l'image en niveaux de gris
     output, circle_count, circle_list, merged_colors = detect_circles(image_path)
     image = cv2.imread(image_path)
@@ -180,7 +180,7 @@ def hough_transform(image_path):
     print("high:", h)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    return intersections_near_circles
-
-image_path = "4.jpg"
-hough_transform(image_path)
+    print("intersections_near_circles",intersections_near_circles)
+    return intersections_near_circles #liste avec les coordonnées du centre de la pierre, les 2 lettres de lignes et colonnes associées, la couleur de la pirre
+"""image_path = "processed_image3.jpg"
+hough_transform(image_path)"""

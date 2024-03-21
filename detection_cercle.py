@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 
-def detect_circles(image_path): 
+def detect_circles(image_path): #Image de base non redimensionnée
     img = cv2.imread(image_path)
     output = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 5)
     _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
 
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 40, param1=50, param2=30, minRadius=30, maxRadius=60)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 40, param1=50, param2=30, minRadius=10, maxRadius=60)
 
     circle_count = 0  
     circle_centers = []  
@@ -85,8 +85,13 @@ def detect_circles(image_path):
         merged_image = cv2.resize(merged_image, (800, 800))
         cv2.imshow('output_and_merged', np.hstack([output, merged_image]))
         cv2.waitKey(0)
-    print("Liste des couleurs des cercles fusionnés:", merged_colors)
-    return output, circle_count, merged, merged_colors
+        cv2.imshow("output",output)
+        cv2.waitKey(0)
+        print("circle_count:",circle_count)
+        print("merged:",merged)
+        print("merged color:",merged_colors)
+        print("Liste des couleurs des cercles fusionnés:", merged_colors)
+    return output, circle_count, merged, merged_colors  #output : image avec les cercles de couleurs entourés, circle_count : nombre de cercles détectés sur l'image, merged : liste avec les coordonnées des centres des cercles, merged_color : liste avec les couleurs des cercles dans le même ordre que la liste avec les coordonnées
 
-img = "4.jpg"
+img = "processed_image3.jpg"
 detect_circles(img)

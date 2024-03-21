@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-def detect_circles(image_path): 
+def detect_circles(image_path): #image de base non modifiée
     img = cv2.imread(image_path)
     output = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -126,20 +126,19 @@ def detect_circles(image_path):
             if not circles_merged:
                 break
         # Connecter les points sur les mêmes lignes horizontales et verticales
-        #merged_image = connect_points_on_same_lines(lines_info, merged_image, intermediate_points)
+        #merged_image = connect_points_on_same_lines( merged_image, intermediate_points)
 
         # Affichage de l'image fusionnée avec les lignes connectées
         merged_image = cv2.resize(merged_image, (800, 800))
         cv2.imshow('output_and_merged_with_lines', merged_image)
         cv2.waitKey(0)
-
-    print("Liste des couleurs des cercles fusionnés:", merged_colors)
+    
     print("Distances entre les points où les lignes sont tracées:", distances)
     print("Coordonnées des points utilisés pour les lignes tracées:", lines_info)
     print("intermediate points",len(intermediate_points))
-    return output, circle_count, merged, merged_colors
+    return output, circle_count, merged #output :
 
-"""def connect_points_on_same_lines(lines_info, merged_image, intermediate_points):
+def connect_points_on_same_lines( merged_image, intermediate_points):
     # Définir une tolérance pour déterminer si deux points sont alignés
     tolerance = 20
     # Définir une distance minimale entre deux points pour tracer une ligne
@@ -214,7 +213,7 @@ def detect_circles(image_path):
     for i, line in enumerate(merged_lines):
         print(f"Ligne {i + 1}: {line}")
 
-    return merged_image"""
+    return merged_image
 
 
 img = "plateauideal.jpg"
