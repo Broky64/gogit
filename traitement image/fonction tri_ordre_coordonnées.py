@@ -27,22 +27,23 @@ def points_correctes(biggest, aire_cherchée):
     aire=0
     diff = proche_aire(aire,aire_cherchée)
     indice=[]
-    'distance_centre=[]
-    'index_coins= []
-    for elem in points_correctes:
-        x, y = elem
-        distance = ((center_x - x) ** 2 + (center_y - y) ** 2) ** (1 / 2)
-        distance_centre.append(distance)
-    for i in range (len(distance_centre)):
-        eq_dist = [distance_centre[i]]
-        index_coins=[i]
-        for j in range (i+1,len(distance_centre)):
-            if abs(distance_centre[i]-distance_centre[j])<50:
-                eq_dist.append(distance_centre[j])
-                index_coins.append(j)
-            if len(eq_dist) ==4:
-                for index in index_coins:
-                    bons_coins.append(points_correctes[index])'
+    # distance_centre=[]
+    # index_coins= []
+    # bons_coins= []
+    # for elem in biggest:
+    #     x, y = elem
+    #     distance = ((center_x - x) ** 2 + (center_y - y) ** 2) ** (1 / 2)
+    #     distance_centre.append(distance)
+    # for i in range (len(distance_centre)):
+    #     eq_dist = [distance_centre[i]]
+    #     index_coins=[i]
+    #     for j in range (i+1,len(distance_centre)):
+    #         if abs(distance_centre[i]-distance_centre[j])<50:
+    #             eq_dist.append(distance_centre[j])
+    #             index_coins.append(j)
+    #         if len(eq_dist) ==4:
+    #             for index in index_coins:
+    #                 bons_coins.append(biggest[index])
     for indice1 in range(len(biggest)):
         for indice2 in range(len(biggest)):
             if indice2!=indice1:
@@ -100,8 +101,9 @@ cv.circle(contour_img, (center_x, center_y), 25, (255, 0, 255), -1)
 
 points_proches = []
 etat=False
+print('biggest',biggest, 'centre',center_y,center_x)
 biggest = biggest.reshape(-1, 2)
-print('biggest',biggest, 'area',max)
+
 indice = points_correctes(biggest, max_area)
 bons_coins=[biggest[indice[0]],biggest[indice[1]],biggest[indice[2]],biggest[indice[3]]]
 bons_coins = list(bons_coins)

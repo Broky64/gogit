@@ -15,7 +15,6 @@ def hough_transform(image_path):
 
 
     # Initialiser le compteur d'intersections
-    intersection_count = 0
     intersections = []  # Liste pour stocker les coordonnées des intersections
     lines_merge = []
     i = 0
