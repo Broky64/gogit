@@ -1,11 +1,8 @@
 import numpy as np
 import cv2 as cv
-from scipy.spatial.distance import cdist
-import math
-import itertools
-from fonction_séparation import *
+
 # import Image module
-from PIL import Image
+
 
 # ==============================================================================
 # fonction principale
@@ -15,13 +12,13 @@ def separation_objet_image():
 
     # Charger l'image
 
-    image = cv.imread('plateau_pied3.jpg')
-    #image= cv.imread('pierres1.jpg')
+    image = cv.imread('plateau_pied.jpg')
 
-    # cv.imshow('Detected Contours', image)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+    cv.imshow('Detected Contours', image)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
+    #redimensionnement image
     hauteur, largeur, canaux = image.shape
     print(hauteur,largeur)
     hauteur1=int(hauteur*(8000/hauteur)/10)
@@ -44,6 +41,7 @@ def separation_objet_image():
     cv.waitKey(0)
     cv.destroyAllWindows()
 
+    #détection lignes
     edge=cv.Canny(blur,75,200, apertureSize=3)
     cv.imshow('edge', edge)
     cv.waitKey(0)
@@ -58,23 +56,26 @@ def separation_objet_image():
     cv.waitKey(0)
     cv.destroyAllWindows()
 
-    contours = sorted(contours,key=cv.contourArea,reverse=True)[:5]
+    #tri des contours
+    contours = sorted(contours,key=cv.contourArea,reverse=True)[:5] #tri en fonction de la taille de l'aire
+    doc=[]
     for c in contours:
         peri = cv.arcLength(c,True)
-        approx = cv.approxPolyDP(c,0.02*peri,True)
-        if len(approx)==4:
+        approx = cv.approxPolyDP(c,0.02*peri,True) #approximation de la forme du contour
+        if len(approx)==4: # contour à coins 
             doc = approx
             break
-
+    print ('doc',doc)
+    # dessiner des coins
     bons_coins=[]
     for d in doc:
         tuple_point = tuple(d[0])
-        cv2.circle(img2,tuple_point,3,(0,0,255),4)
+        cv.circle(img2,tuple_point,3,(0,0,255),4)
         bons_coins.append(tuple_point)
-    cv2.imshow('Corner points detected',img2)
-    cv2.waitKey(0)
+    cv.imshow('Corner points detected',img2)
+    cv.waitKey(0)
 
-
+    # changement ordre coins
     bons_coins = sorted(bons_coins, key=lambda coord:coord[0])
     bons_coins[:2] = sorted(bons_coins[:2],key=lambda coord:coord[1])
     bons_coins[2:] = sorted(bons_coins[2:],key=lambda coord:coord[1])
@@ -82,17 +83,18 @@ def separation_objet_image():
 
     points_ordre = bons_coins
 
+
     x1, y1 = points_ordre[0]
     x2, y2 = points_ordre[1]
     x3, y3 = points_ordre[2]
     x4, y4 = points_ordre[3]
     print('points_ordre', points_ordre)
 
-
+    #position des coins actuels
     pts_source = np.array([[x1, y1], [x2, y2], [x3, y3], [x4, y4]], dtype=np.float32)
 
     # Définir les nouvelles positions des coins après la transformation
-    # Par exemple, pour une sortie de taille fixe, vous pouvez utiliser :
+
     width = 800  # Largeur de l'image de sortie
     height = 800  # Hauteur de l'image de sortie
     pts_destination = np.array([[0, 0], [width, 0], [0, height], [width, height]], dtype=np.float32)
