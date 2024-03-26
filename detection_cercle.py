@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def detect_circles(image_path): #Image de base non redimensionnée
+def detect_circles(image_path): #Image avec cercles a détecter
     img = cv2.imread(image_path)
     output = img.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -13,7 +13,8 @@ def detect_circles(image_path): #Image de base non redimensionnée
     circle_count = 0  
     circle_centers = []  
     circle_colors = []  
-
+    if circles is None :
+       return print("il n'y a pas de cercle dét")
     if circles is not None:
         detected_circles = np.uint16(np.around(circles))
 
@@ -93,5 +94,5 @@ def detect_circles(image_path): #Image de base non redimensionnée
         print("Liste des couleurs des cercles fusionnés:", merged_colors)
     return output, circle_count, merged, merged_colors  #output : image avec les cercles de couleurs entourés, circle_count : nombre de cercles détectés sur l'image, merged : liste avec les coordonnées des centres des cercles, merged_color : liste avec les couleurs des cercles dans le même ordre que la liste avec les coordonnées
 
-img = "processed_image3.jpg"
+img = "6.jpg"
 detect_circles(img)
