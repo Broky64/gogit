@@ -8,7 +8,7 @@ def detect_circles(image_path): #Image de base non redimensionnée
     gray = cv2.medianBlur(gray, 5)
     _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
 
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 40, param1=50, param2=30, minRadius=10, maxRadius=60)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 40, param1=50, param2=30, minRadius=5, maxRadius=60)
 
     circle_count = 0  
     circle_centers = []  

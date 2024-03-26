@@ -42,7 +42,7 @@ def detect_circles(image_path):
                     if dist_centers < 50:
                         print("distance entre les cercles : ", dist_centers, "cercles 1 :", circle_centers[i], "cercles 1 :", circle_centers[j])
                         print(f"Les centres des cercles {i+1} et {j+1} sont proches, fusion en cours...")
-                        new_x = int((x1 + x2) / 2)
+                        new_x = int((x1 + x2) / 2) 
                         new_y = int((y1 + y2) / 2)
                         new_r = int((r1 + r2) / 2)
                         circle_centers.append((new_x, new_y, new_r))
