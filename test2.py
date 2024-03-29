@@ -100,4 +100,4 @@ def hough_transform(image_path):
     cv2.destroyAllWindows()
 
 # Exemple d'utilisation :
-hough_transform("6.jpg")
+hough_transform("reflet.jpg")

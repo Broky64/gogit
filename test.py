@@ -182,5 +182,5 @@ def hough_transform(image_path): #image_path : photo du plateau non modifiées
     cv2.destroyAllWindows()
     print("intersections_near_circles",intersections_near_circles)
     return intersections_near_circles #liste avec les coordonnées du centre de la pierre, les 2 lettres de lignes et colonnes associées, la couleur de la pirre
-"""image_path = "processed_image3.jpg"
-hough_transform(image_path)"""
+image_path = "processed_image2.jpg"
+hough_transform(image_path)

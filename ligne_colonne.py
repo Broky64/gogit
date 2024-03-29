@@ -15,6 +15,7 @@ def find_nearest_intersection(circle_center, intersections): #circle_center : ce
         if distance < min_distance:
             min_distance = distance
             nearest_intersection = intersection
+    print("nearest",nearest_intersection)
     return nearest_intersection  #coordonnée de l'intersection la plus proche de la pierre cherchée
 
 def goban(image_path): 

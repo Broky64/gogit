@@ -7,14 +7,13 @@ def detect_circles(image_path): #Image avec cercles a détecter
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 5)
     _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-
     circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 40, param1=50, param2=30, minRadius=5, maxRadius=60)
 
     circle_count = 0  
     circle_centers = []  
     circle_colors = []  
     if circles is None :
-       return print("il n'y a pas de cercle dét")
+       return print("il n'y a pas de cercle détecté")
     if circles is not None:
         detected_circles = np.uint16(np.around(circles))
 
@@ -94,5 +93,5 @@ def detect_circles(image_path): #Image avec cercles a détecter
         print("Liste des couleurs des cercles fusionnés:", merged_colors)
     return output, circle_count, merged, merged_colors  #output : image avec les cercles de couleurs entourés, circle_count : nombre de cercles détectés sur l'image, merged : liste avec les coordonnées des centres des cercles, merged_color : liste avec les couleurs des cercles dans le même ordre que la liste avec les coordonnées
 
-img = "6.jpg"
+img = "reflet.jpg"
 detect_circles(img)

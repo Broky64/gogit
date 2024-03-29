@@ -1,5 +1,5 @@
 import datetime
-from test import hough_transform
+#from test import hough_transform
 from ligne_colonne import goban
 
 # Obtenir les informations sur les intersections à partir de hough_transform
